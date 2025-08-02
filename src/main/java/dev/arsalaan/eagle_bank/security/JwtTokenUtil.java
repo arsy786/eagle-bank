@@ -22,6 +22,7 @@ public class JwtTokenUtil {
     private String SECRET_KEY;
     @Value("${app.jwt.expiration-in-ms:3600000}") // default 1 hour
     private long EXPIRATION_TIME;
+
     // generate token
     public String generateToken(Authentication authentication) {
 
@@ -70,6 +71,13 @@ public class JwtTokenUtil {
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public String getJwtTokenFromHeader(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 
 }
