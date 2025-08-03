@@ -36,13 +36,14 @@ public class AccountService {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    Account account = new Account();
-    account.setAccountName(accountRequest.getAccountName());
-    account.setAccountType(accountRequest.getAccountType());
-    account.setAccountNumber(generateAccountNumber());
-    account.setBalance(BigDecimal.ZERO);
-    account.setCreatedAt(LocalDateTime.now());
-    account.setUser(user); // Associate account with user
+    Account account = Account.builder()
+        .accountName(accountRequest.getAccountName())
+        .accountType(accountRequest.getAccountType())
+        .accountNumber(generateAccountNumber())
+        .balance(BigDecimal.ZERO)
+        .createdAt(LocalDateTime.now())
+        .user(user)
+        .build();
 
     return accountRepository.save(account);
   }

@@ -86,8 +86,6 @@ public class UserService {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    // TODO: check if user has a bank account, 409 is true
-
     List<Account> accounts = accountRepository.findByUserId(userId);
 
     if (!accounts.isEmpty()) {
@@ -109,9 +107,11 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already taken");
     }
 
-    User newUser = new User();
-    newUser.setEmail(registerRequest.getEmail());
-    newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+    User newUser = User.builder()
+        .email(registerRequest.getEmail())
+        .password(passwordEncoder.encode(registerRequest.getPassword()))
+        .build();
+
     userRepository.save(newUser);
   }
 }

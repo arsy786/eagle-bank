@@ -41,21 +41,22 @@ public class TransactionService {
     }
 
     String transactionType = transactionRequest.getTransactionType().toLowerCase();
+
     if (!transactionType.equals("deposit") && !transactionType.equals("withdrawal")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction type must be 'deposit' or 'withdrawal'");
     }
 
-    if (transactionType.equals("withdrawal")) {
-      if (account.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
-        throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Insufficient funds");
-      }
+    if (transactionType.equals("withdrawal") &&
+        account.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
+      throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Insufficient funds");
     }
 
-    Transaction transaction = new Transaction();
-    transaction.setTransactionType(transactionType);
-    transaction.setAmount(transactionRequest.getAmount());
-    transaction.setCreatedAt(LocalDateTime.now());
-    transaction.setAccount(account);
+    Transaction transaction = Transaction.builder()
+        .transactionType(transactionType)
+        .amount(transactionRequest.getAmount())
+        .createdAt(LocalDateTime.now())
+        .account(account)
+        .build();
 
     if (transactionType.equals("deposit")) {
       account.setBalance(account.getBalance().add(transactionRequest.getAmount()));
