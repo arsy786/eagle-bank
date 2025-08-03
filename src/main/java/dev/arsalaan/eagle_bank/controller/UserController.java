@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -52,7 +51,7 @@ public class UserController {
         return ResponseEntity.status(201).body("User registered successfully");
     }
 
-    @PutMapping("/{userId}")
+    @PatchMapping("/{userId}")
     public ResponseEntity<User> updateUserById(@PathVariable Long userId,
             @Valid @RequestBody UpdateUserRequest updateUserRequest,
             @RequestHeader("Authorization") String authHeader) {

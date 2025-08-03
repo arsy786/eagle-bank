@@ -4,9 +4,13 @@ import dev.arsalaan.eagle_bank.dto.LoginRequest;
 import dev.arsalaan.eagle_bank.dto.JwtResponse;
 import dev.arsalaan.eagle_bank.dto.RegisterRequest;
 import dev.arsalaan.eagle_bank.dto.UpdateUserRequest;
+import dev.arsalaan.eagle_bank.model.Account;
 import dev.arsalaan.eagle_bank.model.User;
+import dev.arsalaan.eagle_bank.repository.AccountRepository;
 import dev.arsalaan.eagle_bank.repository.UserRepository;
 import dev.arsalaan.eagle_bank.security.JwtTokenUtil;
+
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,16 +28,19 @@ public class UserService {
   private final JwtTokenUtil jwtTokenUtil;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final AccountRepository accountRepository;
 
   public UserService(
       AuthenticationManager authenticationManager,
       JwtTokenUtil jwtTokenUtil,
       UserRepository userRepository,
-      PasswordEncoder passwordEncoder) {
+      PasswordEncoder passwordEncoder,
+      AccountRepository accountRepository) {
     this.authenticationManager = authenticationManager;
     this.jwtTokenUtil = jwtTokenUtil;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.accountRepository = accountRepository;
   }
 
   public User getUserById(Long userId, String token) {
@@ -80,6 +87,12 @@ public class UserService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
     // TODO: check if user has a bank account, 409 is true
+
+    List<Account> accounts = accountRepository.findByUserId(userId);
+
+    if (!accounts.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "User has a bank account");
+    }
 
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
