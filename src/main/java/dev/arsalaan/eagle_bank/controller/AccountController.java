@@ -19,7 +19,9 @@ import dev.arsalaan.eagle_bank.model.Account;
 import dev.arsalaan.eagle_bank.security.JwtTokenUtil;
 import dev.arsalaan.eagle_bank.service.AccountService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/accounts")
 public class AccountController {
@@ -34,8 +36,12 @@ public class AccountController {
 
   @GetMapping
   public ResponseEntity<List<Account>> getAllAccounts(@RequestHeader("Authorization") String authHeader) {
+    log.info("GET /v1/accounts called");
+
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
     List<Account> accounts = accountService.getAllAccounts(token);
+
+    log.info("Retrieved {} accounts", accounts.size());
     return ResponseEntity.ok(accounts);
   }
 
@@ -44,8 +50,12 @@ public class AccountController {
       @PathVariable Long accountId,
       @RequestHeader("Authorization") String authHeader) {
 
+    log.info("GET /v1/accounts/{} called", accountId);
+
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
     Account account = accountService.getAccountById(accountId, token);
+
+    log.info("Retrieved account with id {}", accountId);
     return ResponseEntity.ok(account);
   }
 
@@ -53,10 +63,13 @@ public class AccountController {
   public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest accountRequest,
       @RequestHeader("Authorization") String authHeader) {
 
+    log.info("POST /v1/accounts called");
+
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
 
     Account account = accountService.createAccount(accountRequest, token);
 
+    log.info("Account created successfully");
     return ResponseEntity.status(HttpStatus.CREATED).body(account);
   }
 
@@ -66,8 +79,12 @@ public class AccountController {
       @RequestBody AccountRequest accountRequest,
       @RequestHeader("Authorization") String authHeader) {
 
+    log.info("PATCH /v1/accounts/{} called", accountId);
+
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
     Account updatedAccount = accountService.updateAccountById(accountId, accountRequest, token);
+
+    log.info("Account updated successfully");
     return ResponseEntity.ok(updatedAccount);
   }
 
@@ -76,8 +93,12 @@ public class AccountController {
       @PathVariable Long accountId,
       @RequestHeader("Authorization") String authHeader) {
 
+    log.info("DELETE /v1/accounts/{} called", accountId);
+
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
     accountService.deleteAccountById(accountId, token);
+
+    log.info("Account deleted successfully");
     return ResponseEntity.ok("Account deleted successfully");
   }
 }

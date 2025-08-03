@@ -32,22 +32,28 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable Long userId,
             @RequestHeader("Authorization") String authHeader) {
 
+        log.info("GET /v1/users/{} called", userId);
         String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
 
         User user = userService.getUserById(userId, token);
 
+        log.info("User with id {} retrieved successfully", userId);
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        log.info("POST /v1/users/login called for email: {}", loginRequest.getEmail());
         JwtResponse jwtResponse = userService.login(loginRequest);
+        log.info("User {} logged in successfully", loginRequest.getEmail());
         return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        log.info("POST /v1/users called to register user with email: {}", registerRequest.getEmail());
         userService.register(registerRequest);
+        log.info("User {} registered successfully", registerRequest.getEmail());
         return ResponseEntity.status(201).body("User registered successfully");
     }
 
@@ -56,10 +62,13 @@ public class UserController {
             @Valid @RequestBody UpdateUserRequest updateUserRequest,
             @RequestHeader("Authorization") String authHeader) {
 
+        log.info("PATCH /v1/users/{} called", userId);
+
         String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
 
         User updatedUser = userService.updateUserById(userId, updateUserRequest, token);
 
+        log.info("User with id {} updated successfully", userId);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -67,9 +76,13 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(@PathVariable Long userId,
             @RequestHeader("Authorization") String authHeader) {
 
+        log.info("DELETE /v1/users/{} called", userId);
+
         String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
 
         userService.deleteUserById(userId, token);
+
+        log.info("User with id {} deleted successfully", userId);
         return ResponseEntity.ok("User deleted successfully");
     }
 
