@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.arsalaan.eagle_bank.dto.AccountRequest;
-import dev.arsalaan.eagle_bank.model.Account;
+import dev.arsalaan.eagle_bank.dto.AccountResponse;
 import dev.arsalaan.eagle_bank.security.JwtTokenUtil;
 import dev.arsalaan.eagle_bank.service.AccountService;
 import jakarta.validation.Valid;
@@ -35,46 +35,46 @@ public class AccountController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Account>> getAllAccounts(@RequestHeader("Authorization") String authHeader) {
+  public ResponseEntity<List<AccountResponse>> getAllAccounts(@RequestHeader("Authorization") String authHeader) {
     log.info("GET /v1/accounts called");
 
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
-    List<Account> accounts = accountService.getAllAccounts(token);
+    List<AccountResponse> accounts = accountService.getAllAccounts(token);
 
     log.info("Retrieved {} accounts", accounts.size());
     return ResponseEntity.ok(accounts);
   }
 
   @GetMapping("/{accountId}")
-  public ResponseEntity<Account> getAccountById(
+  public ResponseEntity<AccountResponse> getAccountById(
       @PathVariable Long accountId,
       @RequestHeader("Authorization") String authHeader) {
 
     log.info("GET /v1/accounts/{} called", accountId);
 
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
-    Account account = accountService.getAccountById(accountId, token);
+    AccountResponse account = accountService.getAccountById(accountId, token);
 
     log.info("Retrieved account with id {}", accountId);
     return ResponseEntity.ok(account);
   }
 
   @PostMapping
-  public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest accountRequest,
+  public ResponseEntity<AccountResponse> createAccount(@Valid @RequestBody AccountRequest accountRequest,
       @RequestHeader("Authorization") String authHeader) {
 
     log.info("POST /v1/accounts called");
 
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
 
-    Account account = accountService.createAccount(accountRequest, token);
+    AccountResponse account = accountService.createAccount(accountRequest, token);
 
     log.info("Account created successfully");
     return ResponseEntity.status(HttpStatus.CREATED).body(account);
   }
 
   @PatchMapping("/{accountId}")
-  public ResponseEntity<Account> updateAccountById(
+  public ResponseEntity<AccountResponse> updateAccountById(
       @PathVariable Long accountId,
       @RequestBody AccountRequest accountRequest,
       @RequestHeader("Authorization") String authHeader) {
@@ -82,7 +82,7 @@ public class AccountController {
     log.info("PATCH /v1/accounts/{} called", accountId);
 
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
-    Account updatedAccount = accountService.updateAccountById(accountId, accountRequest, token);
+    AccountResponse updatedAccount = accountService.updateAccountById(accountId, accountRequest, token);
 
     log.info("Account updated successfully");
     return ResponseEntity.ok(updatedAccount);

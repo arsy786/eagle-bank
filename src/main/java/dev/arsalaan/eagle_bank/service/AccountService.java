@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import dev.arsalaan.eagle_bank.dto.AccountRequest;
+import dev.arsalaan.eagle_bank.dto.AccountResponse;
+import dev.arsalaan.eagle_bank.mapper.AccountMapper;
 import dev.arsalaan.eagle_bank.model.Account;
 import dev.arsalaan.eagle_bank.model.User;
 import dev.arsalaan.eagle_bank.repository.AccountRepository;
@@ -22,33 +24,28 @@ public class AccountService {
   private final AccountRepository accountRepository;
   private final UserRepository userRepository;
   private final JwtTokenUtil jwtTokenUtil;
+  private final AccountMapper accountMapper;
 
   public AccountService(AccountRepository accountRepository, UserRepository userRepository,
-      JwtTokenUtil jwtTokenUtil) {
+      JwtTokenUtil jwtTokenUtil, AccountMapper accountMapper) {
     this.accountRepository = accountRepository;
     this.userRepository = userRepository;
     this.jwtTokenUtil = jwtTokenUtil;
+    this.accountMapper = accountMapper;
   }
 
-  public Account createAccount(AccountRequest accountRequest, String token) {
+  public List<AccountResponse> getAllAccounts(String token) {
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    Account account = Account.builder()
-        .accountName(accountRequest.getAccountName())
-        .accountType(accountRequest.getAccountType())
-        .accountNumber(generateAccountNumber())
-        .balance(BigDecimal.ZERO)
-        .createdAt(LocalDateTime.now())
-        .user(user)
-        .build();
+    List<Account> accounts = accountRepository.findByUserId(user.getId());
 
-    return accountRepository.save(account);
+    return accountMapper.toAccountResponseList(accounts);
   }
 
-  public Account getAccountById(Long accountId, String token) {
+  public AccountResponse getAccountById(Long accountId, String token) {
 
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
@@ -59,19 +56,28 @@ public class AccountService {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to access this account");
     }
 
-    return account;
+    return accountMapper.toAccountResponse(account);
   }
 
-  public List<Account> getAllAccounts(String token) {
+  public AccountResponse createAccount(AccountRequest accountRequest, String token) {
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    return accountRepository.findByUserId(user.getId());
+    Account account = accountMapper.toAccount(accountRequest);
+
+    account.setUser(user);
+    account.setAccountNumber(generateAccountNumber());
+    account.setBalance(BigDecimal.ZERO);
+    account.setCreatedAt(LocalDateTime.now());
+
+    Account savedAccount = accountRepository.save(account);
+
+    return accountMapper.toAccountResponse(savedAccount);
   }
 
-  public Account updateAccountById(Long accountId, AccountRequest accountRequest, String token) {
+  public AccountResponse updateAccountById(Long accountId, AccountRequest accountRequest, String token) {
 
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
@@ -90,7 +96,9 @@ public class AccountService {
       account.setAccountType(accountRequest.getAccountType());
     }
 
-    return accountRepository.save(account);
+    Account updatedAccount = accountRepository.save(account);
+
+    return accountMapper.toAccountResponse(updatedAccount);
   }
 
   public void deleteAccountById(Long accountId, String token) {
@@ -107,7 +115,7 @@ public class AccountService {
   }
 
   private String generateAccountNumber() {
-    return UUID.randomUUID().toString().replace("-", "").substring(0, 12); // 12-digit pseudo account number
+    return UUID.randomUUID().toString().replace("-", "").substring(0, 12);
   }
 
 }

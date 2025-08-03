@@ -10,6 +10,7 @@ public class AccountResponse {
 
   private Long id;
   private String accountNumber;
+  private String accountName;
   private String accountType;
   private BigDecimal balance;
   private LocalDateTime createdAt;
