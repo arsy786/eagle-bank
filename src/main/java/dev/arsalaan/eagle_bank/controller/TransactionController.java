@@ -30,7 +30,7 @@ public class TransactionController {
     this.jwtTokenUtil = jwtTokenUtil;
   }
 
-  @GetMapping("/")
+  @GetMapping
   public ResponseEntity<List<Transaction>> getAllTransactionsByAccountId(
       @PathVariable Long accountId,
       @RequestHeader("Authorization") String authHeader) {
@@ -51,7 +51,7 @@ public class TransactionController {
     return ResponseEntity.ok(transaction);
   }
 
-  @PostMapping("/")
+  @PostMapping
   public ResponseEntity<Transaction> createTransaction(
       @PathVariable Long accountId,
       @Valid @RequestBody TransactionRequest transactionRequest,

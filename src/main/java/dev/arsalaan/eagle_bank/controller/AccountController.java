@@ -32,7 +32,7 @@ public class AccountController {
     this.jwtTokenUtil = jwtTokenUtil;
   }
 
-  @GetMapping("/")
+  @GetMapping
   public ResponseEntity<List<Account>> getAllAccounts(@RequestHeader("Authorization") String authHeader) {
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
     List<Account> accounts = accountService.getAllAccounts(token);
@@ -49,7 +49,7 @@ public class AccountController {
     return ResponseEntity.ok(account);
   }
 
-  @PostMapping("/")
+  @PostMapping
   public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest accountRequest,
       @RequestHeader("Authorization") String authHeader) {
 

@@ -45,7 +45,7 @@ public class UserController {
         return ResponseEntity.ok(jwtResponse);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         userService.register(registerRequest);
         return ResponseEntity.status(201).body("User registered successfully");

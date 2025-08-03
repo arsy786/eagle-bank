@@ -27,15 +27,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.POST, "/v1/users", "/v1/users/").permitAll()
-                .requestMatchers(HttpMethod.POST, "/v1/users/login").permitAll()
-                .requestMatchers("/error").permitAll() // avoids 403 on validation or other errors
-                .requestMatchers("/h2-console/**").permitAll() // dev only
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/v1/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/users/login").permitAll()
+                        .requestMatchers("/error").permitAll() // avoids 403 on validation or other errors
+                        .requestMatchers("/h2-console/**").permitAll() // dev only
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // To allow H2 console frames (dev only)
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
@@ -55,4 +54,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
