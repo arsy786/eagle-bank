@@ -1,12 +1,17 @@
 package dev.arsalaan.eagle_bank.model;
 
 import lombok.*;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 
-@Data
 @Entity
-@Table(name = "users") // user is a reserved keyword therefore must rename to users
+@Table(name = "users") // "user" is a reserved keyword
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -19,5 +24,4 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
 }
