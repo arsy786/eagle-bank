@@ -89,7 +89,7 @@ public class AccountController {
   }
 
   @DeleteMapping("/{accountId}")
-  public ResponseEntity<String> deleteAccountById(
+  public ResponseEntity<Void> deleteAccountById(
       @PathVariable Long accountId,
       @RequestHeader("Authorization") String authHeader) {
 
@@ -99,6 +99,6 @@ public class AccountController {
     accountService.deleteAccountById(accountId, token);
 
     log.info("Account deleted successfully");
-    return ResponseEntity.ok("Account deleted successfully");
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import dev.arsalaan.eagle_bank.dto.TransactionRequest;
+import dev.arsalaan.eagle_bank.dto.TransactionResponse;
 import dev.arsalaan.eagle_bank.exception.ApiRequestException;
+import dev.arsalaan.eagle_bank.mapper.TransactionMapper;
 import dev.arsalaan.eagle_bank.model.Account;
 import dev.arsalaan.eagle_bank.model.Transaction;
 import dev.arsalaan.eagle_bank.enums.TransactionType;
@@ -22,15 +24,17 @@ public class TransactionService {
   private final TransactionRepository transactionRepository;
   private final AccountRepository accountRepository;
   private final JwtTokenUtil jwtTokenUtil;
+  private final TransactionMapper transactionMapper;
 
   public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository,
-      JwtTokenUtil jwtTokenUtil) {
+      JwtTokenUtil jwtTokenUtil, TransactionMapper transactionMapper) {
     this.transactionRepository = transactionRepository;
     this.accountRepository = accountRepository;
     this.jwtTokenUtil = jwtTokenUtil;
+    this.transactionMapper = transactionMapper;
   }
 
-  public Transaction createTransaction(Long accountId, TransactionRequest transactionRequest, String token) {
+  public TransactionResponse createTransaction(Long accountId, TransactionRequest transactionRequest, String token) {
 
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "Account not found"));
@@ -62,10 +66,12 @@ public class TransactionService {
     }
 
     accountRepository.save(account);
-    return transactionRepository.save(transaction);
+    Transaction savedTransaction = transactionRepository.save(transaction);
+
+    return transactionMapper.toTransactionResponse(savedTransaction);
   }
 
-  public List<Transaction> getAllTransactionsByAccountId(Long accountId, String token) {
+  public List<TransactionResponse> getAllTransactionsByAccountId(Long accountId, String token) {
 
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "Account not found"));
@@ -76,10 +82,12 @@ public class TransactionService {
       throw new ApiRequestException(HttpStatus.FORBIDDEN, "You are not authorized to access this account");
     }
 
-    return transactionRepository.findByAccountId(accountId);
+    List<Transaction> transactions = transactionRepository.findByAccountId(accountId);
+
+    return transactionMapper.toTransactionResponseList(transactions);
   }
 
-  public Transaction getTransactionById(Long accountId, Long transactionId, String token) {
+  public TransactionResponse getTransactionById(Long accountId, Long transactionId, String token) {
 
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "Account not found"));
@@ -97,6 +105,6 @@ public class TransactionService {
       throw new ApiRequestException(HttpStatus.NOT_FOUND, "Transaction not found");
     }
 
-    return transaction;
+    return transactionMapper.toTransactionResponse(transaction);
   }
 }

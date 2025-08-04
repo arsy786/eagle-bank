@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.arsalaan.eagle_bank.dto.TransactionRequest;
-import dev.arsalaan.eagle_bank.model.Transaction;
+import dev.arsalaan.eagle_bank.dto.TransactionResponse;
 import dev.arsalaan.eagle_bank.security.JwtTokenUtil;
 import dev.arsalaan.eagle_bank.service.TransactionService;
 import jakarta.validation.Valid;
@@ -33,21 +33,21 @@ public class TransactionController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Transaction>> getAllTransactionsByAccountId(
+  public ResponseEntity<List<TransactionResponse>> getAllTransactionsByAccountId(
       @PathVariable Long accountId,
       @RequestHeader("Authorization") String authHeader) {
 
     log.info("GET /v1/accounts/{}/transactions called", accountId);
 
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
-    List<Transaction> transactions = transactionService.getAllTransactionsByAccountId(accountId, token);
+    List<TransactionResponse> transactions = transactionService.getAllTransactionsByAccountId(accountId, token);
 
     log.info("Retrieved {} transactions for account with id {}", transactions.size(), accountId);
     return ResponseEntity.ok(transactions);
   }
 
   @GetMapping("/{transactionId}")
-  public ResponseEntity<Transaction> getTransactionById(
+  public ResponseEntity<TransactionResponse> getTransactionById(
       @PathVariable Long accountId,
       @PathVariable Long transactionId,
       @RequestHeader("Authorization") String authHeader) {
@@ -55,14 +55,14 @@ public class TransactionController {
     log.info("GET /v1/accounts/{}/transactions/{} called", accountId, transactionId);
 
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
-    Transaction transaction = transactionService.getTransactionById(accountId, transactionId, token);
+    TransactionResponse transaction = transactionService.getTransactionById(accountId, transactionId, token);
 
     log.info("Retrieved transaction with id {}", transactionId);
     return ResponseEntity.ok(transaction);
   }
 
   @PostMapping
-  public ResponseEntity<Transaction> createTransaction(
+  public ResponseEntity<TransactionResponse> createTransaction(
       @PathVariable Long accountId,
       @Valid @RequestBody TransactionRequest transactionRequest,
       @RequestHeader("Authorization") String authHeader) {
@@ -70,7 +70,7 @@ public class TransactionController {
     log.info("POST /v1/accounts/{}/transactions called", accountId);
 
     String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
-    Transaction transaction = transactionService.createTransaction(accountId, transactionRequest, token);
+    TransactionResponse transaction = transactionService.createTransaction(accountId, transactionRequest, token);
 
     log.info("Transaction created successfully");
     return ResponseEntity.status(HttpStatus.CREATED).body(transaction);

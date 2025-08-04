@@ -3,13 +3,14 @@ package dev.arsalaan.eagle_bank.controller;
 import dev.arsalaan.eagle_bank.dto.LoginRequest;
 import dev.arsalaan.eagle_bank.dto.JwtResponse;
 import dev.arsalaan.eagle_bank.dto.RegisterRequest;
-import dev.arsalaan.eagle_bank.dto.UpdateUserRequest;
-import dev.arsalaan.eagle_bank.model.User;
+import dev.arsalaan.eagle_bank.dto.UserRequest;
+import dev.arsalaan.eagle_bank.dto.UserResponse;
 import dev.arsalaan.eagle_bank.security.JwtTokenUtil;
 import dev.arsalaan.eagle_bank.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,13 +30,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId,
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId,
             @RequestHeader("Authorization") String authHeader) {
 
         log.info("GET /v1/users/{} called", userId);
         String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
 
-        User user = userService.getUserById(userId, token);
+        UserResponse user = userService.getUserById(userId, token);
 
         log.info("User with id {} retrieved successfully", userId);
         return ResponseEntity.ok(user);
@@ -50,30 +51,34 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-        log.info("POST /v1/users called to register user with email: {}", registerRequest.getEmail());
+    public ResponseEntity<Void> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+        log.info("POST /v1/users called to register user: {} {} ({})",
+                registerRequest.getFirstName(), registerRequest.getLastName(), registerRequest.getEmail());
+
         userService.register(registerRequest);
-        log.info("User {} registered successfully", registerRequest.getEmail());
-        return ResponseEntity.status(201).body("User registered successfully");
+
+        log.info("User {} {} registered successfully", registerRequest.getFirstName(), registerRequest.getLastName());
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long userId,
-            @Valid @RequestBody UpdateUserRequest updateUserRequest,
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable Long userId,
+            @Valid @RequestBody UserRequest updateUserRequest,
             @RequestHeader("Authorization") String authHeader) {
 
         log.info("PATCH /v1/users/{} called", userId);
 
         String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
 
-        User updatedUser = userService.updateUserById(userId, updateUserRequest, token);
+        UserResponse updatedUser = userService.updateUserById(userId, updateUserRequest, token);
 
-        log.info("User with id {} updated successfully", userId);
+        log.info("User {} {} updated successfully", updatedUser.getFirstName(), updatedUser.getLastName());
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long userId,
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long userId,
             @RequestHeader("Authorization") String authHeader) {
 
         log.info("DELETE /v1/users/{} called", userId);
@@ -83,7 +88,7 @@ public class UserController {
         userService.deleteUserById(userId, token);
 
         log.info("User with id {} deleted successfully", userId);
-        return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 
 }
