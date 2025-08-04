@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import dev.arsalaan.eagle_bank.enums.TransactionType;
 import jakarta.persistence.*;
 
 @Entity
@@ -22,7 +23,8 @@ public class Transaction {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String transactionType; // "deposit" or "withdrawal"
+  @Enumerated(EnumType.STRING)
+  private TransactionType transactionType;
 
   private BigDecimal amount;
 

@@ -7,10 +7,10 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import dev.arsalaan.eagle_bank.dto.AccountRequest;
 import dev.arsalaan.eagle_bank.dto.AccountResponse;
+import dev.arsalaan.eagle_bank.exception.ApiRequestException;
 import dev.arsalaan.eagle_bank.mapper.AccountMapper;
 import dev.arsalaan.eagle_bank.model.Account;
 import dev.arsalaan.eagle_bank.model.User;
@@ -38,7 +38,7 @@ public class AccountService {
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "User not found"));
 
     List<Account> accounts = accountRepository.findByUserId(user.getId());
 
@@ -48,12 +48,12 @@ public class AccountService {
   public AccountResponse getAccountById(Long accountId, String token) {
 
     Account account = accountRepository.findById(accountId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "Account not found"));
 
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     if (!account.getUser().getEmail().equals(email)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to access this account");
+      throw new ApiRequestException(HttpStatus.FORBIDDEN, "You are not authorized to access this account");
     }
 
     return accountMapper.toAccountResponse(account);
@@ -63,7 +63,7 @@ public class AccountService {
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "User not found"));
 
     Account account = accountMapper.toAccount(accountRequest);
 
@@ -80,12 +80,12 @@ public class AccountService {
   public AccountResponse updateAccountById(Long accountId, AccountRequest accountRequest, String token) {
 
     Account account = accountRepository.findById(accountId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "Account not found"));
 
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     if (!account.getUser().getEmail().equals(email)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to update this account");
+      throw new ApiRequestException(HttpStatus.FORBIDDEN, "You are not authorized to update this account");
     }
 
     // Only update fields that are provided in the request (PATCH semantics)
@@ -103,12 +103,12 @@ public class AccountService {
 
   public void deleteAccountById(Long accountId, String token) {
     Account account = accountRepository.findById(accountId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "Account not found"));
 
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     if (!account.getUser().getEmail().equals(email)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized to delete this account");
+      throw new ApiRequestException(HttpStatus.FORBIDDEN, "You are not authorized to delete this account");
     }
 
     accountRepository.delete(account);

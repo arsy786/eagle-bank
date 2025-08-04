@@ -4,6 +4,7 @@ import dev.arsalaan.eagle_bank.dto.LoginRequest;
 import dev.arsalaan.eagle_bank.dto.JwtResponse;
 import dev.arsalaan.eagle_bank.dto.RegisterRequest;
 import dev.arsalaan.eagle_bank.dto.UpdateUserRequest;
+import dev.arsalaan.eagle_bank.exception.ApiRequestException;
 import dev.arsalaan.eagle_bank.model.Account;
 import dev.arsalaan.eagle_bank.model.User;
 import dev.arsalaan.eagle_bank.repository.AccountRepository;
@@ -19,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -46,12 +46,12 @@ public class UserService {
   public User getUserById(Long userId, String token) {
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "User not found"));
 
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     if (!user.getEmail().equals(email)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorized to access this resource");
+      throw new ApiRequestException(HttpStatus.FORBIDDEN, "User not authorized to access this resource");
     }
 
     return user;
@@ -59,12 +59,12 @@ public class UserService {
 
   public User updateUserById(Long userId, UpdateUserRequest updateUserRequest, String token) {
     User existingUser = userRepository.findById(userId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "User not found"));
 
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     if (!existingUser.getEmail().equals(email)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorized to access this resource");
+      throw new ApiRequestException(HttpStatus.FORBIDDEN, "User not authorized to access this resource");
     }
 
     existingUser.setEmail(updateUserRequest.getEmail());
@@ -84,18 +84,18 @@ public class UserService {
 
   public void deleteUserById(Long userId, String token) {
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "User not found"));
 
     List<Account> accounts = accountRepository.findByUserId(userId);
 
     if (!accounts.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "User has a bank account");
+      throw new ApiRequestException(HttpStatus.CONFLICT, "User has a bank account");
     }
 
     String email = jwtTokenUtil.getUsernameFromToken(token);
 
     if (!user.getEmail().equals(email)) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User not authorized to access this resource");
+      throw new ApiRequestException(HttpStatus.FORBIDDEN, "User not authorized to access this resource");
     }
 
     userRepository.delete(user);
@@ -104,7 +104,7 @@ public class UserService {
   public void register(RegisterRequest registerRequest) {
 
     if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is already taken");
+      throw new ApiRequestException(HttpStatus.CONFLICT, "Email is already taken");
     }
 
     User newUser = User.builder()
