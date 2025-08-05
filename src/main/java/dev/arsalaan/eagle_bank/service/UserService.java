@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -46,6 +47,15 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
     this.accountRepository = accountRepository;
     this.userMapper = userMapper;
+  }
+
+  public UserResponse getUserByToken(String token) {
+    String email = jwtTokenUtil.getUsernameFromToken(token);
+
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new ApiRequestException(HttpStatus.NOT_FOUND, "User not found"));
+
+    return userMapper.toUserResponse(user);
   }
 
   public UserResponse getUserById(Long userId, String token) {
@@ -103,7 +113,7 @@ public class UserService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String accessToken = jwtTokenUtil.generateToken(authentication);
-    return new JwtResponse(loginRequest.getEmail(), accessToken);
+    return new JwtResponse(authentication.getName(), accessToken);
   }
 
   public void deleteUserById(Long userId, String token) {

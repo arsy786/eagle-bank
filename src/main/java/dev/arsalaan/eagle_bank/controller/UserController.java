@@ -29,6 +29,17 @@ public class UserController {
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getUserByToken(@RequestHeader("Authorization") String authHeader) {
+        log.info("GET /v1/users/me called");
+
+        String token = jwtTokenUtil.getJwtTokenFromHeader(authHeader);
+        UserResponse user = userService.getUserByToken(token);
+
+        log.info("Current user retrieved successfully: {}", user.getEmail());
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId,
             @RequestHeader("Authorization") String authHeader) {
@@ -57,7 +68,8 @@ public class UserController {
 
         userService.register(registerRequest);
 
-        log.info("User {} {} registered successfully", registerRequest.getFirstName(), registerRequest.getLastName());
+        log.info("User {} {} ({}) registered successfully",
+                registerRequest.getFirstName(), registerRequest.getLastName(), registerRequest.getEmail());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
