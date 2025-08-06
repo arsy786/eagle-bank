@@ -13,10 +13,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
-
-import dev.arsalaan.eagle_bank.exception.ApiRequestException;
 
 @Component
 @Slf4j
@@ -24,10 +23,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtUserDetailsService jwtUserDetailsService;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public JwtRequestFilter(JwtTokenUtil jwtTokenUtil, JwtUserDetailsService jwtUserDetailsService) {
+    public JwtRequestFilter(JwtTokenUtil jwtTokenUtil, JwtUserDetailsService jwtUserDetailsService,
+            HandlerExceptionResolver handlerExceptionResolver) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.jwtUserDetailsService = jwtUserDetailsService;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
@@ -57,13 +59,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // set spring security
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-        } catch (ApiRequestException ex) {
-            log.warn("JWT authentication failed: {}", ex.getMessage());
-            response.setStatus(ex.getHttpStatus().value());
-            response.getWriter().write("{\"error\":\"" + ex.getMessage() + "\"}");
-            return; // Stop the filter chain
+
         } catch (Exception ex) {
-            log.warn("JWT authentication failed: {}", ex.getMessage());
+            log.error("Unexpected error during JWT authentication", ex);
+            handlerExceptionResolver.resolveException(request, response, null, ex);
         }
 
         filterChain.doFilter(request, response);

@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
@@ -30,7 +35,7 @@ not just to an individual controller.
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
   /*
-   * Provides handling for exceptions throughout this service.
+   * Provides handling for exceptions throughout the app.
    * Created to encapsulate errors with more detail and essentially replace
    * javax.persistence.EntityNotFoundException
    * ApiRequestException ~= EntityNotFoundException
@@ -91,9 +96,70 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  /*
+   * Handle JWT Expired Exception
+   */
+  @ExceptionHandler(ExpiredJwtException.class)
+  public ResponseEntity<Object> handleExpiredJwtException(ExpiredJwtException ex) {
+
+    ApiException apiException = new ApiException(
+        "JWT token has expired",
+        HttpStatus.UNAUTHORIZED,
+        ZonedDateTime.now(ZoneId.of("Z")));
+
+    log.error("Expired JWT token error: {}", ex.getMessage());
+
+    return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
+  }
+
+  /*
+   * Handle JWT Signature Exception
+   */
+  @ExceptionHandler(SignatureException.class)
+  public ResponseEntity<Object> handleSignatureException(SignatureException ex) {
+
+    ApiException apiException = new ApiException(
+        "Invalid JWT signature",
+        HttpStatus.FORBIDDEN,
+        ZonedDateTime.now(ZoneId.of("Z")));
+    log.error("Invalid JWT signature error: {}", ex.getMessage());
+
+    return new ResponseEntity<>(apiException, HttpStatus.FORBIDDEN);
+  }
+
+  /*
+   * Handle JWT Malformed Exception
+   */
+  @ExceptionHandler(MalformedJwtException.class)
+  public ResponseEntity<Object> handleMalformedJwtException(MalformedJwtException ex) {
+
+    ApiException apiException = new ApiException(
+        "Malformed JWT token",
+        HttpStatus.BAD_REQUEST,
+        ZonedDateTime.now(ZoneId.of("Z")));
+
+    log.error("Malformed JWT token error: {}", ex.getMessage());
+
+    return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+  }
+
+  /*
+   * Handle JWT Unsupported Exception
+   */
+  @ExceptionHandler(UnsupportedJwtException.class)
+  public ResponseEntity<Object> handleUnsupportedJwtException(UnsupportedJwtException ex) {
+
+    ApiException apiException = new ApiException(
+        "Unsupported JWT token",
+        HttpStatus.BAD_REQUEST,
+        ZonedDateTime.now(ZoneId.of("Z")));
+    log.error("Unsupported JWT token error: {}", ex.getMessage());
+
+    return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+  }
+
   // other exception handlers can be added here
   // (e.g. handleEntityNotFoundException, handleHttpMessageNotReadable,
-  // handleUserNotFoundException, handleContentNotAllowedException,
-  // handleMethodArgumentNotValid)
+  // handleUserNotFoundException, handleContentNotAllowedException)
 
 }
