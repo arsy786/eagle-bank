@@ -88,7 +88,7 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
 ## 📋 Prerequisites
 
 - Java 17 or higher
-- Maven 3.6+
+- Maven 3.6.3+
 - IDE (IntelliJ IDEA, Eclipse, or VS Code recommended)
 
 ## 🔧 Installation & Setup
