@@ -61,7 +61,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of("http://localhost:3000")); // frontend origin
 
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
 
         config.setAllowedHeaders(List.of("*")); // allow all headers
 
