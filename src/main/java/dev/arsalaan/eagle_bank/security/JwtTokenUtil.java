@@ -13,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
+import dev.arsalaan.eagle_bank.exception.ApiRequestException;
+import org.springframework.http.HttpStatus;
 
 @Slf4j
 @Component
@@ -47,6 +49,7 @@ public class JwtTokenUtil {
             return true;
         } catch (ExpiredJwtException ex) {
             log.error("Expired JWT token", ex.getMessage());
+            throw new ApiRequestException(HttpStatus.UNAUTHORIZED, "JWT token has expired");
         } catch (IllegalArgumentException ex) {
             log.error("Token is null, empty or only whitespace", ex.getMessage());
         } catch (MalformedJwtException ex) {

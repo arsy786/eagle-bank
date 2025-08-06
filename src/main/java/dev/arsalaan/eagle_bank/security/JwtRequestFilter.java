@@ -16,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import dev.arsalaan.eagle_bank.exception.ApiRequestException;
+
 @Component
 @Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -29,7 +31,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         // get JWT (token) from http request
         String token = getJwtFromRequest(request);
@@ -37,8 +40,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             // validate token
             if (StringUtils.hasText(token) &&
-                jwtTokenUtil.validateToken(token) &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+                    jwtTokenUtil.validateToken(token) &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 // get username from token
                 String email = jwtTokenUtil.getUsernameFromToken(token);
@@ -46,14 +49,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // load user associated with token
                 UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(email);
 
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
 
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 // set spring security
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
+        } catch (ApiRequestException ex) {
+            log.warn("JWT authentication failed: {}", ex.getMessage());
+            response.setStatus(ex.getHttpStatus().value());
+            response.getWriter().write("{\"error\":\"" + ex.getMessage() + "\"}");
+            return; // Stop the filter chain
         } catch (Exception ex) {
             log.warn("JWT authentication failed: {}", ex.getMessage());
         }
