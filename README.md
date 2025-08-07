@@ -31,7 +31,7 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
    git clone https://github.com/arsy786/eagle-bank-backend.git
    ```
 
-3. Navigate to the cloned repository's root directory
+3. Navigate to the cloned repository's root directory:
 
    ```bash
    cd eagle-bank-backend
@@ -39,66 +39,46 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
 
 ### Database Configuration
 
-The application supports both **H2 in-memory database** (for development) and **PostgreSQL** (for production). Configure your choice in `src/main/resources/application.properties`:
+The application supports both H2 in-memory database and PostgreSQL . Configure your choice in `src/main/resources/application.properties` as per the examples below:
 
-#### Option A: H2 In-Memory Database (Development)
+1. H2 In-Memory Database:
 
-Uncomment the H2 configuration and comment out PostgreSQL:
+   ```properties
+   # H2 Database Configuration
+   spring.datasource.url=jdbc:h2:mem:eaglebankdb
+   spring.datasource.driver-class-name=org.h2.Driver
+   spring.datasource.username=sa
+   spring.datasource.password=
+   spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+   spring.h2.console.enabled=true
+   spring.h2.console.path=/h2-console
+   ```
 
-```properties
-# H2 Database Configuration (for development)
-spring.datasource.url=jdbc:h2:mem:eaglebankdb
-spring.datasource.driver-class-name=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.h2.console.enabled=true
-spring.h2.console.path=/h2-console
-
-# PostgreSQL Configuration (comment out for H2)
-# spring.datasource.url=${PG_URL}
-# spring.datasource.username=${PG_USERNAME}
-# spring.datasource.password=${PG_PASSWORD}
-# spring.datasource.driverClassName=org.postgresql.Driver
-# spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-```
-
-#### Option B: PostgreSQL Database (Production)
-
-Comment out H2 configuration and uncomment PostgreSQL:
-
-```properties
-# H2 Database Configuration (comment out for PostgreSQL)
-# spring.datasource.url=jdbc:h2:mem:eaglebankdb
-# spring.datasource.driver-class-name=org.h2.Driver
-# spring.datasource.username=sa
-# spring.datasource.password=
-# spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-# spring.h2.console.enabled=true
-# spring.h2.console.path=/h2-console
-
-# PostgreSQL Configuration (for production)
-spring.datasource.url=${PG_URL}
-spring.datasource.username=${PG_USERNAME}
-spring.datasource.password=${PG_PASSWORD}
-spring.datasource.driverClassName=org.postgresql.Driver
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-```
+2. PostgreSQL Database:
+      
+   ```properties
+   # PostgreSQL Configuration
+   spring.datasource.url=${PG_URL}
+   spring.datasource.username=${PG_USERNAME}
+   spring.datasource.password=${PG_PASSWORD}
+   spring.datasource.driverClassName=org.postgresql.Driver
+   spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+   ```
 
 ### Environment Variables Setup
 
-Create a `.env` file in the root directory with your configuration:
+1. Create a `.env` file in the root directory with your configuration:
 
-```env
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-here-make-it-long-and-secure-512bits64chars
-JWT_EXPIRATION_IN_MS=3600000
-
-# PostgreSQL Configuration (only needed if using PostgreSQL)
-PG_URL=jdbc:postgresql://localhost:5432/eaglebank
-PG_USERNAME=your_postgres_username
-PG_PASSWORD=your_postgres_password
-```
+   ```env
+   # JWT Configuration
+   JWT_SECRET=your-super-secret-jwt-key-here-make-it-long-and-secure-512bits64chars
+   JWT_EXPIRATION_IN_MS=3600000
+   
+   # PostgreSQL Configuration (only needed if using PostgreSQL)
+   PG_URL=jdbc:postgresql://localhost:5432/eaglebank
+   PG_USERNAME=your_postgres_username
+   PG_PASSWORD=your_postgres_password
+   ```
 
 ### Build and Run
 
@@ -121,6 +101,10 @@ The backend should now be running on `http://localhost:8080`.
 After starting both the backend and frontend servers, you can access the web application by navigating to `http://localhost:3000` in your web browser. Ensure both servers are running concurrently to allow the frontend to communicate with the backend effectively.
 
 > **Frontend Repository**: The backend API for this application is available at [eagle-bank-frontend](https://github.com/arsy786/eagle-bank-frontend)
+
+### CORS
+
+The API is configured to accept frontend requests from `http://localhost:3000`.
 
 ## API Documentation
 
@@ -150,12 +134,6 @@ Use any of the following tools to interact with the API:
 - Swagger UI (built-in)
 - Postman
 - cURL
-
-## CORS
-
-The API is configured to accept requests from:
-
-- `http://localhost:3000` (React development server)
 
 ## 🏗️ Project Structure
 
