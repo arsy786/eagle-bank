@@ -104,7 +104,7 @@ After starting both the backend and frontend servers, you can access the web app
 
 ### CORS
 
-The API is configured to accept frontend requests from `http://localhost:3000`.
+The API is configured to accept requests from `http://localhost:3000`.
 
 ## API Documentation
 
