@@ -1,37 +1,10 @@
-# Eagle Bank API
+# Eagle Bank Backend
 
-A comprehensive Spring Boot REST API for a banking application that provides user authentication, account management, and transaction processing capabilities.
+A comprehensive Spring Boot REST API for a banking application that provides account management, transaction tracking, and secure authentication capabilities.
 
-## 📑 Table of Contents
+> **Frontend Repository**: The backend API for this application is available at [eagle-bank-frontend](https://github.com/arsy786/eagle-bank-frontend)
 
-- [🏦 Overview](#-overview)
-- [🚀 Features](#-features)
-  - [Authentication & Authorization](#authentication--authorization)
-  - [User Management](#user-management)
-  - [Account Management](#account-management)
-  - [Transaction Processing](#transaction-processing)
-- [🛠️ Technology Stack](#️-technology-stack)
-- [📋 Prerequisites](#-prerequisites)
-- [🔧 Installation & Setup](#-installation--setup)
-  - [Cloning the Repo](#cloning-the-repo)
-  - [Database Configuration](#database-configuration)
-  - [Environment Variables Setup](#environment-variables-setup)
-  - [Build and Run](#build-and-run)
-  - [Database Access](#database-access)
-- [📚 API Documentation](#-api-documentation)
-  - [Base URL](#base-url)
-  - [Authentication](#authentication)
-  - [Interactive API Documentation](#interactive-api-documentation)
-- [🧪 Testing](#-testing)
-  - [Manual Testing](#manual-testing)
-- [🔧 Configuration](#-configuration)
-  - [CORS Configuration](#cors-configuration)
-- [🏗️ Project Structure](#️-project-structure)
-- [🔒 Security Features](#-security-features)
-
----
-
-## 🏦 Overview
+## Features
 
 Eagle Bank API is a secure banking application built with Spring Boot that allows users to:
 
@@ -41,61 +14,14 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
 - View transaction history
 - Secure access to only their own resources
 
-## 🚀 Features
+## Getting Started
 
-### Authentication & Authorization
-
-- **JWT-based authentication** with secure token generation and validation
-- **User registration** with email and password validation
-- **User login** with token-based session management
-- **Role-based access control** ensuring users can only access their own resources
-
-### User Management
-
-- **User registration** with email validation
-- **User profile management** (view, update, delete)
-- **Secure password handling** with BCrypt encryption
-- **Conflict handling** for users with existing bank accounts
-
-### Account Management
-
-- **Bank account creation** with unique account numbers
-- **Account details retrieval** with ownership verification
-- **Account updates** with partial update support
-- **Account deletion** with conflict checking
-- **Multiple account support** per user
-
-### Transaction Processing
-
-- **Deposit transactions** with automatic balance updates
-- **Withdrawal transactions** with insufficient funds validation
-- **Transaction history** with detailed records
-- **Real-time balance updates** after transactions
-- **Transaction type validation** (deposit/withdrawal only)
-
-## 🛠️ Technology Stack
-
-- **Java 17**
-- **Spring Boot 3.5.4**
-- **Spring Security** with JWT authentication
-- **Spring Data JPA** with Hibernate
-- **H2 Database** (in-memory for development)
-- **Lombok** for boilerplate reduction
-- **MapStruct** for object mapping
-- **JJWT** for JWT token handling
-- **Spring Validation** for request validation
-
-## 📋 Prerequisites
+### Prerequisites
 
 - Java 17 or higher
 - Maven 3.6.3+
-- IDE (IntelliJ IDEA, Eclipse, or VS Code recommended)
-
-## 🔧 Installation & Setup
 
 ### Cloning the Repo
-
-### 1. Clone the Repository
 
 1. Open your terminal or command prompt.
 
@@ -111,7 +37,7 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
    cd eagle-bank-backend
    ```
 
-### 2. Database Configuration
+### Database Configuration
 
 The application supports both **H2 in-memory database** (for development) and **PostgreSQL** (for production). Configure your choice in `src/main/resources/application.properties`:
 
@@ -159,7 +85,7 @@ spring.datasource.driverClassName=org.postgresql.Driver
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 ```
 
-### 3. Environment Variables Setup
+### Environment Variables Setup
 
 Create a `.env` file in the root directory with your configuration:
 
@@ -174,7 +100,7 @@ PG_USERNAME=your_postgres_username
 PG_PASSWORD=your_postgres_password
 ```
 
-### 4. Build and Run
+### Build and Run
 
 1. Build the project:
 
@@ -188,24 +114,15 @@ PG_PASSWORD=your_postgres_password
    mvn spring-boot:run
    ```
 
-The application will start on `http://localhost:8080`
+The backend should now be running on `http://localhost:8080`.
 
-### 5. Database Access
+### Accessing the Application
 
-#### H2 Console (Development)
+After starting both the backend and frontend servers, you can access the web application by navigating to `http://localhost:3000` in your web browser. Ensure both servers are running concurrently to allow the frontend to communicate with the backend effectively.
 
-- URL: `http://localhost:8080/h2-console`
-- JDBC URL: `jdbc:h2:mem:eaglebankdb`
-- Username: `sa`
-- Password: (leave empty)
+> **Frontend Repository**: The backend API for this application is available at [eagle-bank-frontend](https://github.com/arsy786/eagle-bank-frontend)
 
-#### PostgreSQL (Production)
-
-- Ensure PostgreSQL is running
-- Create database: `createdb eaglebank`
-- Update `.env` with your PostgreSQL credentials
-
-## 📚 API Documentation
+## API Documentation
 
 ### Base URL
 
@@ -213,41 +130,30 @@ The application will start on `http://localhost:8080`
 http://localhost:8080
 ```
 
-### Authentication
+### Auth Header
 
-All protected endpoints require a JWT token in the Authorization header:
+All protected endpoints require a JWT token:
 
 ```
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer <token>
 ```
 
-### Interactive API Documentation
+### Swagger
 
-Once the server is running, you can access the interactive API documentation at:
+Once the server is running, you can access the API documentation at:
 
-- **Swagger UI**: http://localhost:8080/swagger-ui/index.html
-- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
-These provide comprehensive, interactive documentation for all endpoints including:
+## Testing
 
-- Request/response schemas
-- Authentication requirements
-- Example requests and responses
-- Try-it-out functionality
+Use any of the following tools:
 
-## 🧪 Testing
+- Swagger UI (built-in)
+- Postman
+- cURL
 
-### Manual Testing
-
-You can test the API using tools like:
-
-- **Postman**
-- **cURL**
-- **Swagger UI** (built-in testing interface)
-
-## 🔧 Configuration
-
-### CORS Configuration
+## CORS
 
 The API is configured to accept requests from:
 
@@ -259,49 +165,41 @@ The API is configured to accept requests from:
 src/main/java/dev/arsalaan/eagle_bank/
 ├── config/
 │   └── SecurityConfig.java          # Spring Security & CORS configuration
+│   └── SwaggerConfig.java           # Swagger OpenAPI configuration
 ├── controller/
 │   ├── UserController.java          # User management endpoints
 │   ├── AccountController.java       # Account management endpoints
 │   └── TransactionController.java   # Transaction endpoints
 ├── dto/
-│   ├── RegisterRequest.java         # User registration DTO
-│   ├── LoginRequest.java           # User login DTO
-│   ├── UserRequest.java            # User update DTO
-│   ├── UserResponse.java           # User response DTO
-│   ├── AccountRequest.java         # Account creation/update DTO
-│   ├── AccountResponse.java        # Account response DTO
-│   └── TransactionRequest.java     # Transaction creation DTO
+│   ├── RegisterRequest.java         # User creation DTO
+│   ├── LoginRequest.java            # User login request DTO
+│   ├── JwtResponse.java             # User login response DTO
+│   ├── UserRequest.java             # User update request DTO
+│   ├── UserResponse.java            # User response DTO
+│   ├── AccountRequest.java          # Account creation/update DTO
+│   ├── AccountResponse.java         # Account response DTO
+│   └── TransactionRequest.java      # Transaction creation DTO
+│   └── TransactionResponse.java     # Transaction response DTO
 ├── enums/
-│   └── TransactionType.java        # Transaction type enum
+│   └── TransactionType.java         # Transaction type enum
 ├── exception/
-│   ├── ApiException.java           # Error response model
-│   ├── ApiRequestException.java    # Custom exception
-│   └── ApiExceptionHandler.java    # Global exception handler
+│   ├── ApiException.java            # Error response model
+│   ├── ApiRequestException.java     # Custom exception
+│   └── ApiExceptionHandler.java     # Global exception handler
 ├── model/
-│   ├── User.java                   # User entity
-│   ├── Account.java                # Account entity
-│   └── Transaction.java            # Transaction entity
+│   ├── User.java                    # User entity
+│   ├── Account.java                 # Account entity
+│   └── Transaction.java             # Transaction entity
 ├── repository/
-│   ├── UserRepository.java         # User data access
-│   ├── AccountRepository.java      # Account data access
-│   └── TransactionRepository.java  # Transaction data access
+│   ├── UserRepository.java          # User data access
+│   ├── AccountRepository.java       # Account data access
+│   └── TransactionRepository.java   # Transaction data access
 ├── security/
-│   ├── JwtTokenUtil.java          # JWT token utilities
-│   ├── JwtRequestFilter.java      # JWT authentication filter
-│   └── JwtUserDetailsService.java # User details service
+│   ├── JwtTokenUtil.java            # JWT token utilities
+│   ├── JwtRequestFilter.java        # JWT authentication filter
+│   └── JwtUserDetailsService.java   # User details service
 └── service/
-    ├── UserService.java            # User business logic
-    ├── AccountService.java         # Account business logic
-    └── TransactionService.java     # Transaction business logic
+    ├── UserService.java             # User business logic
+    ├── AccountService.java          # Account business logic
+    └── TransactionService.java      # Transaction business logic
 ```
-
-## 🔒 Security Features
-
-- **JWT Token Authentication**: Secure token-based authentication
-- **Password Encryption**: BCrypt password hashing
-- **Authorization**: Users can only access their own resources
-- **Input Validation**: Comprehensive request validation
-- **Error Handling**: Secure error responses without sensitive data exposure
-- **CORS Support**: Configured for frontend integration
-
-**Note**: This is a development version using H2 in-memory database. For production deployment, configure a persistent database like PostgreSQL or MySQL.
