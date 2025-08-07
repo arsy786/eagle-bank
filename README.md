@@ -2,7 +2,7 @@
 
 A comprehensive Spring Boot REST API for a banking application that provides account management, transaction tracking, and secure authentication capabilities.
 
-> **Frontend Repository**: The backend API for this application is available at [eagle-bank-frontend](https://github.com/arsy786/eagle-bank-frontend)
+> **Frontend Repository**: The frontend for this application is available at [eagle-bank-frontend](https://github.com/arsy786/eagle-bank-frontend)
 
 ## Features
 
