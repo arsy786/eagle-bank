@@ -102,13 +102,13 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
 2. Clone the repository using Git:
 
    ```bash
-   git clone https://github.com/arsy786/eagle-bank.git
+   git clone https://github.com/arsy786/eagle-bank-backend.git
    ```
 
 3. Navigate to the cloned repository's root directory
 
    ```bash
-   cd eagle-bank
+   cd eagle-bank-backend
    ```
 
 ### 2. Database Configuration
