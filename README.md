@@ -165,7 +165,7 @@ Create a `.env` file in the root directory with your configuration:
 
 ```env
 # JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-here-make-it-long-and-secure
+JWT_SECRET=your-super-secret-jwt-key-here-make-it-long-and-secure-512bits64chars
 JWT_EXPIRATION_IN_MS=3600000
 
 # PostgreSQL Configuration (only needed if using PostgreSQL)
