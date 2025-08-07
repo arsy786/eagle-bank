@@ -145,9 +145,7 @@ Once the server is running, you can access the API documentation at:
 - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
-## Testing
-
-Use any of the following tools:
+Use any of the following tools to interact with the API:
 
 - Swagger UI (built-in)
 - Postman
