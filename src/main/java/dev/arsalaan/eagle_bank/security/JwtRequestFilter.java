@@ -63,6 +63,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } catch (Exception ex) {
             log.error("Unexpected error during JWT authentication", ex);
             handlerExceptionResolver.resolveException(request, response, null, ex);
+            return;
         }
 
         filterChain.doFilter(request, response);
