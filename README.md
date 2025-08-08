@@ -92,7 +92,7 @@ The application supports both H2 in-memory database and PostgreSQL. Configure yo
    mvn spring-boot:run
    ```
 
-The backend should now be running on `http://localhost:8080`.
+   The backend should now be running on `http://localhost:8080`.
 
 ### Accessing the Application
 
