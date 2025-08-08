@@ -18,7 +18,7 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
 
 ### Prerequisites
 
-- Java 17 or higher
+- Java 17+
 - Maven 3.6.3+
 
 ### Cloning the Repo
@@ -39,7 +39,7 @@ Eagle Bank API is a secure banking application built with Spring Boot that allow
 
 ### Database Configuration
 
-The application supports both H2 in-memory database and PostgreSQL . Configure your choice in `src/main/resources/application.properties` as per the examples below:
+The application supports both H2 in-memory database and PostgreSQL. Configure your choice in `src/main/resources/application.properties` as per the examples below:
 
 1. H2 In-Memory Database:
 
@@ -67,7 +67,7 @@ The application supports both H2 in-memory database and PostgreSQL . Configure y
 
 ### Environment Variables Setup
 
-1. Create a `.env` file in the root directory with your configuration:
+1. Create a `.env` file in the root directory and add the following:
 
    ```env
    # JWT Configuration
@@ -100,7 +100,7 @@ The backend should now be running on `http://localhost:8080`.
 
 After starting both the backend and frontend servers, you can access the web application by navigating to `http://localhost:3000` in your web browser. Ensure both servers are running concurrently to allow the frontend to communicate with the backend effectively.
 
-> **Frontend Repository**: The backend API for this application is available at [eagle-bank-frontend](https://github.com/arsy786/eagle-bank-frontend)
+> **Frontend Repository**: The frontend for this application is available at [eagle-bank-frontend](https://github.com/arsy786/eagle-bank-frontend)
 
 ### CORS
 
