@@ -80,13 +80,13 @@ The application supports both H2 in-memory database and PostgreSQL. Configure yo
 
 ### Build and Run
 
-1. Build the project:
+1. Build the app:
 
    ```bash
    mvn clean install
    ```
 
-2. Run the Application:
+2. Run the app:
 
    ```bash
    mvn spring-boot:run
