@@ -6,8 +6,6 @@ A comprehensive Spring Boot REST API for a banking application that provides acc
 
 ## Features
 
-Eagle Bank API is a secure banking application built with Spring Boot that allows users to:
-
 - Register and authenticate with JWT tokens
 - Manage their bank accounts (create, read, update, delete)
 - Perform transactions (deposits and withdrawals)
